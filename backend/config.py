@@ -1,0 +1,1 @@
+DATABASE_URL = "postgresql://postgres:250a@localhost/arandu"
