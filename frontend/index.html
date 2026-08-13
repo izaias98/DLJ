@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudyFlow — Plataforma de Estudos</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="auth-screen active" id="loginScreen">
+  <div class="auth-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:36px;">
+      <div class="auth-logo" style="margin-bottom:0"><div class="logo-icon">📚</div><span>Aran<em>du</em></span></div>
+      <div class="theme-toggle" id="themeToggleAuth" onclick="toggleTheme()" title="Alternar tema" style="width:36px;height:36px;">🌙</div>
+    </div>
+    <h1 class="auth-title">Bem-vindo de volta!</h1>
+    <p class="auth-sub">Entre com sua conta para continuar estudando.</p>
+    <div class="form-group"><label>E-mail</label><input type="email" placeholder="seu@email.com" id="loginEmail"></div>
+    <div class="form-group"><label>Senha</label><input type="password" placeholder="••••••••" id="loginPass"></div>
+    <button class="btn-primary" onclick="doLogin()">Entrar na conta</button>
+    <div class="auth-switch">Não tem conta? <a onclick="showScreen('registerScreen')">Cadastre-se grátis</a></div>
+  </div>
+</div>
+
+<!-- CADASTRO -->
+<div class="auth-screen" id="registerScreen">
+  <div class="auth-box">
+    <div class="auth-logo"><div class="logo-icon">📚</div><span>Aran<em>Du</em></span></div>
+    <h1 class="auth-title">Criar conta</h1>
+    <p class="auth-sub">Você é:</p>
+    <div class="type-selector">
+      <div class="type-btn selected" id="typeAluno" onclick="selectType('aluno')"><div class="t-icon">🎓</div><div class="t-label">Aluno</div></div>
+      <div class="type-btn" id="typeProfessor" onclick="selectType('professor')"><div class="t-icon">👨‍🏫</div><div class="t-label">Professor</div></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Nome</label><input type="text" placeholder="Seu nome" id="regName"></div>
+      <div class="form-group"><label>Idade</label><input type="number" placeholder="17" id="regAge"></div>
+    </div>
+    <div class="form-group"><label>E-mail</label><input type="email" placeholder="seu@email.com" id="regEmail"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Cidade</label><input type="text" placeholder="São Paulo" id="regCity"></div>
+      <div class="form-group"><label>Estado</label><input type="text" placeholder="SP" id="regState" maxlength="2"></div>
+    </div>
+    <div class="form-group"><label>Instituição</label><input type="text" placeholder="Nome da sua escola" id="regSchool"></div>
+    <div class="form-group">
+      <label>Interesses de estudo</label>
+      <div class="interest-chips">
+        <div class="interest-chip selected" onclick="toggleInterest(this)">Matemática</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">Física</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">Química</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">Biologia</div>
+        <div class="interest-chip selected" onclick="toggleInterest(this)">História</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">Português</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">ENEM</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">Vestibulares</div>
+        <div class="interest-chip" onclick="toggleInterest(this)">Concursos</div>
+      </div>
+    </div>
+    <button class="btn-primary" onclick="doRegister()">Finalizar cadastro ✓</button>
+    <div class="auth-switch">Já tem conta? <a onclick="showScreen('loginScreen')">Entrar</a></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="appScreen">
+  <aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">📚</div><span>Aran<em>Du</em></span></div>
+    <nav class="sidebar-nav">
+      <div class="nav-item active" onclick="navigate('feed',this)"><span class="nav-icon">🏠</span><span>Início</span></div>
+      <div class="nav-item" onclick="navigate('search',this)"><span class="nav-icon">🔍</span><span>Pesquisar</span></div>
+      <div class="nav-item" onclick="navigate('materias',this)"><span class="nav-icon">📖</span><span>Matérias</span></div>
+      <div class="nav-item" onclick="navigate('comunidades',this)"><span class="nav-icon">👥</span><span>Comunidades</span><span class="nav-badge">3</span></div>
+      <div class="sidebar-section-label">Minha Conta</div>
+      <div class="nav-item" onclick="navigate('perfil',this)"><span class="nav-icon">👤</span><span>Perfil</span></div>
+    </nav>
+    <div class="sidebar-user" onclick="navigate('perfil',null)">
+      <div class="sidebar-avatar" id="sidebarAvatar">M</div>
+      <div class="sidebar-user-info"><div class="s-name" id="sidebarName">Usuário</div><div class="s-role" id="sidebarRole">Aluno</div></div>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-title" id="topbarTitle">Início</div>
+      <div class="search-bar" onclick="navigate('search',document.querySelectorAll('.nav-item')[1])">
+        <span style="color:var(--text3)">🔍</span>
+        <input type="text" placeholder="Pesquisar conteúdo, perfis...">
+      </div>
+      <div class="topbar-actions">
+        <div class="topbar-btn" onclick="showToast('🔔 Nenhuma notificação nova')">🔔</div>
+        <div class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Alternar tema">🌙</div>
+        <div class="topbar-btn" onclick="doLogout()">🚪</div>
+      </div>
+    </div>
+
+    <!-- ═══ FEED ═══ -->
+    <div class="page active" id="page-feed">
+      <div class="feed-grid">
+        <div>
+          <!-- Stories -->
+          <div class="stories-row">
+            <div class="story"><div class="story-ring"><div class="story-inner">➕</div></div><span>Seu story</span></div>
+            <div class="story" onclick="goToSubject('quimica')"><div class="story-ring"><div class="story-inner">🧪</div></div><span>Química</span></div>
+            <div class="story" onclick="goToSubject('matematica')"><div class="story-ring"><div class="story-inner">📐</div></div><span>Geometria</span></div>
+            <div class="story" onclick="goToSubject('biologia')"><div class="story-ring"><div class="story-inner">🧬</div></div><span>Bio Cell</span></div>
+            <div class="story" onclick="goToSubject('fisica')"><div class="story-ring"><div class="story-inner">⚡</div></div><span>Física</span></div>
+            <div class="story" onclick="goToSubject('historia')"><div class="story-ring"><div class="story-inner">📜</div></div><span>História</span></div>
+            <div class="story" onclick="goToSubject('portugues')"><div class="story-ring"><div class="story-inner">🇧🇷</div></div><span>Português</span></div>
+          </div>
+
+          <!-- Quick subject access -->
+          <div style="margin-bottom:8px;font-size:12px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Acesse uma matéria</div>
+          <div class="feed-subjects" style="margin-bottom:24px;">
+            <div class="feed-subject-chip" onclick="goToSubject('quimica')">
+              <span class="fsc-icon">🧪</span><span>Química</span><span class="fsc-count">8 módulos</span>
+            </div>
+            <div class="feed-subject-chip" onclick="goToSubject('matematica')">
+              <span class="fsc-icon">📐</span><span>Matemática</span><span class="fsc-count">12 módulos</span>
+            </div>
+            <div class="feed-subject-chip" onclick="goToSubject('biologia')">
+              <span class="fsc-icon">🧬</span><span>Biologia</span><span class="fsc-count">10 módulos</span>
+            </div>
+            <div class="feed-subject-chip" onclick="goToSubject('fisica')">
+              <span class="fsc-icon">⚡</span><span>Física</span><span class="fsc-count">9 módulos</span>
+            </div>
+            <div class="feed-subject-chip" onclick="goToSubject('historia')">
+              <span class="fsc-icon">📜</span><span>História</span><span class="fsc-count">7 módulos</span>
+            </div>
+            <div class="feed-subject-chip" onclick="goToSubject('portugues')">
+              <span class="fsc-icon">✍️</span><span>Português</span><span class="fsc-count">6 módulos</span>
+            </div>
+          </div>
+
+          <!-- Video cards -->
+          <div class="video-card" onclick="goToSubject('quimica')">
+            <div class="video-thumb"><div class="thumb-bg">⚗️</div><div class="play-btn">▶️</div>
+              <div class="video-duration">18:42</div><div class="video-tag tag-purple">Química Orgânica</div></div>
+            <div class="video-info">
+              <div class="video-meta"><div class="video-author-pic">RB</div><span class="video-author">Prof. Rafael B.</span><span class="video-dot">·</span><span class="video-time">há 2 horas</span></div>
+              <div class="video-title">Funções Oxigenadas: Álcoois e Aldeídos — Revisão Completa para o ENEM</div>
+              <div class="video-stats"><span class="video-stat">👁️ 3,2k</span><span class="video-stat">❤️ 284</span><span class="video-stat">💬 56</span><span class="video-stat">📎 Apostila</span></div>
+            </div>
+          </div>
+          <div class="video-card" onclick="goToSubject('biologia')">
+            <div class="video-thumb"><div class="thumb-bg">🧬</div><div class="play-btn">▶️</div>
+              <div class="video-duration">24:15</div><div class="video-tag tag-teal">Biologia</div></div>
+            <div class="video-info">
+              <div class="video-meta"><div class="video-author-pic" style="background:linear-gradient(135deg,#00D4AA,#0066CC)">AC</div><span class="video-author">Profa. Ana C.</span><span class="video-dot">·</span><span class="video-time">há 5 horas</span></div>
+              <div class="video-title">Citologia: Estrutura da Célula Eucariótica — Tudo que cai no Vestibular</div>
+              <div class="video-stats"><span class="video-stat">👁️ 8,7k</span><span class="video-stat">❤️ 641</span><span class="video-stat">💬 112</span></div>
+            </div>
+          </div>
+          <div class="video-card" onclick="goToSubject('matematica')">
+            <div class="video-thumb"><div class="thumb-bg">📐</div><div class="play-btn">▶️</div>
+              <div class="video-duration">31:08</div><div class="video-tag tag-pink">Matemática</div></div>
+            <div class="video-info">
+              <div class="video-meta"><div class="video-author-pic" style="background:linear-gradient(135deg,#FF4D6D,#CC0033)">MS</div><span class="video-author">Prof. Marcos S.</span><span class="video-dot">·</span><span class="video-time">ontem</span></div>
+              <div class="video-title">Geometria Espacial: Volume de Sólidos — Questões Comentadas FUVEST 2025</div>
+              <div class="video-stats"><span class="video-stat">👁️ 12,4k</span><span class="video-stat">❤️ 1.1k</span><span class="video-stat">💬 203</span><span class="video-stat">📎 Mapa</span></div>
+            </div>
+          </div>
+          <div class="video-card" onclick="goToSubject('fisica')">
+            <div class="video-thumb"><div class="thumb-bg">⚡</div><div class="play-btn">▶️</div>
+              <div class="video-duration">28:30</div><div class="video-tag tag-blue">Física</div></div>
+            <div class="video-info">
+              <div class="video-meta"><div class="video-author-pic" style="background:linear-gradient(135deg,#4A9EFF,#0040AA)">LC</div><span class="video-author">Prof. Lucas C.</span><span class="video-dot">·</span><span class="video-time">há 1 dia</span></div>
+              <div class="video-title">Eletromagnetismo: Lei de Faraday e Indução — Do zero ao avançado</div>
+              <div class="video-stats"><span class="video-stat">👁️ 6,1k</span><span class="video-stat">❤️ 490</span><span class="video-stat">💬 88</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right widgets -->
+        <div>
+          <div class="widget">
+            <div class="widget-title">🔥 Em Alta</div>
+            <div class="trending-item" onclick="goToSubject('enem')"><div class="trend-num">1</div><div class="trend-info"><div class="trend-subject">ENEM 2026</div><div class="trend-posts">4.2k posts hoje</div></div></div>
+            <div class="trending-item" onclick="goToSubject('biologia')"><div class="trend-num">2</div><div class="trend-info"><div class="trend-subject">Citologia</div><div class="trend-posts">2.8k posts hoje</div></div></div>
+            <div class="trending-item" onclick="goToSubject('matematica')"><div class="trend-num">3</div><div class="trend-info"><div class="trend-subject">Geometria Espacial</div><div class="trend-posts">1.9k posts hoje</div></div></div>
+            <div class="trending-item" onclick="goToSubject('quimica')"><div class="trend-num">4</div><div class="trend-info"><div class="trend-subject">Funções Oxigenadas</div><div class="trend-posts">1.4k posts hoje</div></div></div>
+          </div>
+          <div class="widget">
+            <div class="widget-title">👨‍🏫 Professores para Seguir</div>
+            <div class="teacher-item"><div class="teacher-pic" style="background:linear-gradient(135deg,#7C4DFF,#FF4D6D)">LC</div><div class="teacher-info"><div class="t-name">Prof. Lucas C.</div><div class="t-sub">Física • 34k seguidores</div></div><button class="follow-btn" onclick="toggleFollow(this,'Prof. Lucas C.')">Seguir</button></div>
+            <div class="teacher-item"><div class="teacher-pic" style="background:linear-gradient(135deg,#00D4AA,#4A9EFF)">PM</div><div class="teacher-info"><div class="t-name">Profa. Paula M.</div><div class="t-sub">História • 28k seguidores</div></div><button class="follow-btn" onclick="toggleFollow(this,'Profa. Paula M.')">Seguir</button></div>
+            <div class="teacher-item"><div class="teacher-pic" style="background:linear-gradient(135deg,#FFD166,#FF8C32)">JO</div><div class="teacher-info"><div class="t-name">Prof. João O.</div><div class="t-sub">Português • 19k seguidores</div></div><button class="follow-btn" onclick="toggleFollow(this,'Prof. João O.')">Seguir</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ PESQUISA ═══ -->
+    <div class="page" id="page-search">
+      <div class="section-header"><h2>Pesquisar</h2><p>Encontre aulas, documentos, perfis e comunidades</p></div>
+      <div class="search-page-bar"><span style="font-size:20px">🔍</span><input type="text" placeholder="Ex: ENEM 2026, Álgebra, Biologia, Prof. Rafael..." id="mainSearchInput" oninput="filterResults()"></div>
+      <div class="filter-row">
+        <div class="filter-chip active" onclick="setFilter('todos',this)">Todos</div>
+        <div class="filter-chip" onclick="setFilter('videos',this)">🎬 Vídeos</div>
+        <div class="filter-chip" onclick="setFilter('documentos',this)">📄 Documentos</div>
+        <div class="filter-chip" onclick="setFilter('playlists',this)">🎵 Playlists</div>
+        <div class="filter-chip" onclick="setFilter('perfis',this)">👤 Perfis</div>
+        <div class="filter-chip" onclick="setFilter('comunidades',this)">👥 Comunidades</div>
+      </div>
+      <div class="results-grid" id="searchResults">
+        <div class="result-card" data-type="videos" onclick="goToSubject('quimica')"><div class="result-thumb">🧪</div><div class="result-info"><div class="r-title">Química Orgânica — Módulo Completo</div><div class="r-meta"><span class="r-tag tag-purple" style="color:#fff">Vídeo</span><span style="font-size:11px;color:var(--text3)">18 aulas</span></div></div></div>
+        <div class="result-card" data-type="documentos" onclick="goToSubject('matematica')"><div class="result-thumb">📐</div><div class="result-info"><div class="r-title">Apostila Geometria ENEM 2026</div><div class="r-meta"><span class="r-tag tag-blue" style="color:#fff">Documento</span><span style="font-size:11px;color:var(--text3)">PDF • 48 pág.</span></div></div></div>
+        <div class="result-card" data-type="playlists" onclick="goToSubject('biologia')"><div class="result-thumb">🧬</div><div class="result-info"><div class="r-title">Biologia Celular — FUVEST</div><div class="r-meta"><span class="r-tag" style="background:rgba(255,209,102,.2);color:#FFD166">Playlist</span><span style="font-size:11px;color:var(--text3)">12 aulas</span></div></div></div>
+        <div class="result-card" data-type="videos" onclick="goToSubject('fisica')"><div class="result-thumb">⚡</div><div class="result-info"><div class="r-title">Física — Eletromagnetismo Completo</div><div class="r-meta"><span class="r-tag tag-purple" style="color:#fff">Vídeo</span><span style="font-size:11px;color:var(--text3)">24 aulas</span></div></div></div>
+        <div class="result-card" data-type="videos" onclick="goToSubject('historia')"><div class="result-thumb">📜</div><div class="result-info"><div class="r-title">História do Brasil — República</div><div class="r-meta"><span class="r-tag tag-pink" style="color:#fff">Vídeo</span><span style="font-size:11px;color:var(--text3)">8 aulas</span></div></div></div>
+        <div class="result-card" data-type="documentos" onclick="goToSubject('portugues')"><div class="result-thumb">✍️</div><div class="result-info"><div class="r-title">Redação ENEM — Estrutura e Exemplos</div><div class="r-meta"><span class="r-tag tag-blue" style="color:#fff">Documento</span><span style="font-size:11px;color:var(--text3)">PDF • 32 pág.</span></div></div></div>
+        <div class="result-card" data-type="videos" onclick="goToSubject('enem')"><div class="result-thumb">🎯</div><div class="result-info"><div class="r-title">ENEM 2026 — Simulado Completo</div><div class="r-meta"><span class="r-tag tag-pink" style="color:#fff">Vídeo</span><span style="font-size:11px;color:var(--text3)">45 questões</span></div></div></div>
+        <div class="result-card" data-type="comunidades" onclick="navigate('comunidades',document.querySelectorAll('.nav-item')[3])"><div class="result-thumb">👥</div><div class="result-info"><div class="r-title">Comunidade ENEM 2026</div><div class="r-meta"><span class="r-tag" style="background:rgba(0,212,170,.2);color:var(--teal)">Comunidade</span><span style="font-size:11px;color:var(--text3)">2.4k membros</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ MATÉRIAS ═══ -->
+    <div class="page" id="page-materias">
+      <div id="subjectsView">
+        <div class="section-header"><h2>Matérias</h2><p>Explore disciplinas e acesse módulos com todo o conteúdo</p></div>
+        <div style="margin-bottom:14px;font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Disciplinas Acadêmicas</div>
+        <div class="subjects-grid">
+          <div class="subject-card s-purple" onclick="openModule('quimica')"><div class="s-glow" style="background:var(--purple)"></div><div class="s-icon">🧪</div><div class="s-name">Química</div><div class="s-modules">8 módulos</div><div class="s-prog"><div class="s-prog-fill" style="width:65%"></div></div></div>
+          <div class="subject-card s-pink" onclick="openModule('matematica')"><div class="s-glow" style="background:var(--pink)"></div><div class="s-icon">📐</div><div class="s-name">Matemática</div><div class="s-modules">12 módulos</div><div class="s-prog"><div class="s-prog-fill" style="width:40%"></div></div></div>
+          <div class="subject-card s-teal" onclick="openModule('biologia')"><div class="s-glow" style="background:var(--teal)"></div><div class="s-icon">🧬</div><div class="s-name">Biologia</div><div class="s-modules">10 módulos</div><div class="s-prog"><div class="s-prog-fill" style="width:80%"></div></div></div>
+          <div class="subject-card s-blue" onclick="openModule('fisica')"><div class="s-glow" style="background:var(--blue)"></div><div class="s-icon">⚡</div><div class="s-name">Física</div><div class="s-modules">9 módulos</div><div class="s-prog"><div class="s-prog-fill" style="width:30%"></div></div></div>
+          <div class="subject-card s-yellow" onclick="openModule('historia')"><div class="s-glow" style="background:var(--yellow)"></div><div class="s-icon">📜</div><div class="s-name">História</div><div class="s-modules">7 módulos</div><div class="s-prog"><div class="s-prog-fill" style="width:55%"></div></div></div>
+          <div class="subject-card s-orange" onclick="openModule('portugues')"><div class="s-glow" style="background:#FF8C32"></div><div class="s-icon">✍️</div><div class="s-name">Português</div><div class="s-modules">6 módulos</div><div class="s-prog"><div class="s-prog-fill" style="width:70%"></div></div></div>
+        </div>
+        <div style="margin-bottom:14px;font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Preparação para Vestibulares</div>
+        <div class="subjects-grid">
+          <div class="subject-card s-pink" onclick="openModule('enem')"><div class="s-glow" style="background:var(--pink)"></div><div class="s-icon">🎯</div><div class="s-name">ENEM 2026</div><div class="s-modules">Edição especial</div><div class="s-prog"><div class="s-prog-fill" style="width:45%"></div></div></div>
+          <div class="subject-card s-purple" onclick="openModule('vestibulares')"><div class="s-glow" style="background:var(--purple)"></div><div class="s-icon">🏛️</div><div class="s-name">Vestibulares</div><div class="s-modules">5 bancas</div><div class="s-prog"><div class="s-prog-fill" style="width:20%"></div></div></div>
+          <div class="subject-card s-blue" onclick="openModule('concursos')"><div class="s-glow" style="background:var(--blue)"></div><div class="s-icon">📋</div><div class="s-name">Concursos</div><div class="s-modules">Federais e estaduais</div><div class="s-prog"><div class="s-prog-fill" style="width:10%"></div></div></div>
+          <div class="subject-card s-teal" onclick="openModule('militares')"><div class="s-glow" style="background:var(--teal)"></div><div class="s-icon">🎖️</div><div class="s-name">Militares</div><div class="s-modules">3 academias</div><div class="s-prog"><div class="s-prog-fill" style="width:5%"></div></div></div>
+        </div>
+      </div>
+
+      <!-- MODULE DETAIL -->
+      <div class="module-view" id="moduleView">
+        <div class="back-btn" onclick="closeModule()">← Voltar para Matérias</div>
+        <div class="module-header" id="moduleHeader">
+          <div class="module-header-icon" id="moduleIcon">🧪</div>
+          <div class="module-header-info"><h2 id="moduleName">Química</h2><p id="moduleDesc">Funções Orgânicas, Isomeria, Reações</p></div>
+        </div>
+        <div class="module-tabs">
+          <div class="module-tab active" onclick="switchTab(this,'tab-conteudo')">Conteúdo</div>
+          <div class="module-tab" onclick="switchTab(this,'tab-apostilas')">Apostilas</div>
+          <div class="module-tab" onclick="switchTab(this,'tab-tarefas')">Tarefas</div>
+          <div class="module-tab" onclick="switchTab(this,'tab-mapa')">Mapa de Estudo</div>
+        </div>
+        <div id="tab-conteudo"><div class="content-list" id="contentList"></div></div>
+        <div id="tab-apostilas" style="display:none"><div class="content-list" id="apostilasList"></div></div>
+        <div id="tab-tarefas" style="display:none"><div class="content-list" id="tarefasList"></div></div>
+        <div id="tab-mapa" style="display:none">
+          <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;">
+            <div style="font-size:13px;font-weight:700;color:var(--text2);margin-bottom:16px;text-transform:uppercase;letter-spacing:.8px">Trilha de Estudos</div>
+            <div id="mapaContent" style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═══ COMUNIDADES ═══ -->
+    <div class="page" id="page-comunidades">
+      <div class="communities-header">
+        <div><h2 style="font-size:24px;font-weight:800;margin-bottom:6px">Comunidades</h2><p style="color:var(--text2);font-size:14px">Conecte-se com outros estudantes e professores</p></div>
+        <button class="btn-secondary" onclick="showToast('➕ Criar nova comunidade')">+ Nova Comunidade</button>
+      </div>
+      <div style="margin-bottom:14px;font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Minhas Comunidades</div>
+      <div class="comm-grid" style="margin-bottom:32px;">
+        <div class="comm-card" onclick="showToast('👥 Abrindo comunidade...')"><div class="comm-banner" style="background:linear-gradient(135deg,#2D1B69,#1A0F3E)">🧪</div><div class="comm-info"><h4>Química ENEM 2026</h4><p>Grupo de estudos focado em Química para o ENEM.</p><div class="comm-stats"><span class="comm-stat">👥 2.4k</span><span class="comm-stat">📝 148 posts</span><span class="comm-stat">🟢 Ativo</span></div></div></div>
+        <div class="comm-card" onclick="showToast('👥 Abrindo comunidade...')"><div class="comm-banner" style="background:linear-gradient(135deg,#0D3D35,#062420)">🧬</div><div class="comm-info"><h4>Biologia Vestibular</h4><p>Foco em Citologia, Genética e Ecologia.</p><div class="comm-stats"><span class="comm-stat">👥 3.1k</span><span class="comm-stat">📝 312 posts</span><span class="comm-stat">🟢 Ativo</span></div></div></div>
+        <div class="comm-card" onclick="showToast('👥 Abrindo comunidade...')"><div class="comm-banner" style="background:linear-gradient(135deg,#0D2B4A,#071928)">📐</div><div class="comm-info"><h4>Matemática Avançada</h4><p>Geometria, álgebra e cálculo de uma vez por todas.</p><div class="comm-stats"><span class="comm-stat">👥 5.8k</span><span class="comm-stat">📝 891 posts</span><span class="comm-stat">🟢 Ativo</span></div></div></div>
+      </div>
+      <div style="margin-bottom:14px;font-size:13px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Explorar Comunidades</div>
+      <div class="comm-grid">
+        <div class="comm-card" onclick="showToast('✅ Entrou na comunidade!')"><div class="comm-banner" style="background:linear-gradient(135deg,#4D1525,#2D0B15)">⚡</div><div class="comm-info"><h4>Física com Experimentos</h4><p>Aprenda Física através de experimentos práticos.</p><div class="comm-stats"><span class="comm-stat">👥 1.2k</span><span class="comm-stat">📝 64 posts</span></div></div></div>
+        <div class="comm-card" onclick="showToast('✅ Entrou na comunidade!')"><div class="comm-banner" style="background:linear-gradient(135deg,#3D2E00,#231A00)">📜</div><div class="comm-info"><h4>História e Atualidades</h4><p>Conecte o passado com o presente para as redações.</p><div class="comm-stats"><span class="comm-stat">👥 4.4k</span><span class="comm-stat">📝 520 posts</span></div></div></div>
+        <div class="comm-card" onclick="showToast('✅ Entrou na comunidade!')"><div class="comm-banner" style="background:linear-gradient(135deg,#3D1A00,#231000)">✍️</div><div class="comm-info"><h4>Redação Nota 1000</h4><p>Treine redação com feedback de professores.</p><div class="comm-stats"><span class="comm-stat">👥 2.1k</span><span class="comm-stat">📝 208 posts</span></div></div></div>
+      </div>
+    </div>
+
+    <!-- ═══ PERFIL ═══ -->
+    <div class="page" id="page-perfil">
+      <div class="profile-hero">
+        <div class="profile-hero-top">
+          <div class="profile-avatar-big" id="profileAvatar">M</div>
+          <div class="profile-info">
+            <h2 id="profileName">Usuário</h2>
+            <div class="p-role">🎓 <span id="profileRole">Aluno</span></div>
+            <div class="p-bio" id="profileBio">Estudante apaixonado por ciências. ENEM 2026 na mira! 🎯</div>
+            <div style="margin-top:8px;font-size:12px;color:var(--text3)" id="profileLocation"></div>
+          </div>
+          <button class="btn-secondary" style="margin-left:auto;flex-shrink:0" onclick="openEditModal()">✏️ Editar Perfil</button>
+        </div>
+        <div class="profile-stats">
+          <div class="profile-stat"><div class="ps-num" id="statFollowers">247</div><div class="ps-label">Seguidores</div></div>
+          <div class="profile-stat"><div class="ps-num" id="statFollowing">83</div><div class="ps-label">Seguindo</div></div>
+          <div class="profile-stat"><div class="ps-num">18</div><div class="ps-label">Conteúdos</div></div>
+          <div class="profile-stat"><div class="ps-num">3</div><div class="ps-label">Comunidades</div></div>
+        </div>
+      </div>
+
+      <div class="area-tabs">
+        <div class="area-tab active" onclick="switchAreaTab(this,'area-salvos')">💾 Salvos</div>
+        <div class="area-tab" onclick="switchAreaTab(this,'area-conteudo')">📤 Meu Conteúdo</div>
+        <div class="area-tab" onclick="switchAreaTab(this,'area-conta')">⚙️ Conta</div>
+      </div>
+
+      <div id="area-salvos">
+        <div class="saved-grid">
+          <div class="saved-item" onclick="goToSubject('quimica')"><div class="si-icon">🎬</div><div class="si-title">Química Orgânica Completa</div><div class="si-meta">Vídeo • salvo há 3 dias</div></div>
+          <div class="saved-item" onclick="goToSubject('fisica')"><div class="si-icon">📄</div><div class="si-title">Apostila de Física</div><div class="si-meta">Documento • salvo há 1 semana</div></div>
+          <div class="saved-item" onclick="goToSubject('enem')"><div class="si-icon">🎵</div><div class="si-title">Playlist ENEM 2026</div><div class="si-meta">Playlist • 24 aulas</div></div>
+          <div class="saved-item" onclick="navigate('comunidades',document.querySelectorAll('.nav-item')[3])"><div class="si-icon">👥</div><div class="si-title">Comunidade Biologia</div><div class="si-meta">Comunidade • 3.1k membros</div></div>
+          <div class="saved-item" onclick="goToSubject('matematica')"><div class="si-icon">🎬</div><div class="si-title">Geometria Espacial</div><div class="si-meta">Vídeo • salvo ontem</div></div>
+          <div class="saved-item" onclick="goToSubject('historia')"><div class="si-icon">📄</div><div class="si-title">Resumo de História</div><div class="si-meta">Documento • salvo há 5 dias</div></div>
+        </div>
+      </div>
+
+      <div id="area-conteudo" style="display:none">
+        <div style="text-align:center;padding:48px;color:var(--text3)">
+          <div style="font-size:48px;margin-bottom:16px">📤</div>
+          <p style="font-size:15px;margin-bottom:20px">Você ainda não publicou conteúdo.</p>
+          <button class="btn-secondary" onclick="showToast('📤 Publicar novo conteúdo')">Publicar conteúdo</button>
+        </div>
+      </div>
+
+      <div id="area-conta" style="display:none">
+        <div class="account-form">
+          <div style="font-size:15px;font-weight:700;margin-bottom:20px">Dados da Conta</div>
+          <div class="form-row">
+            <div class="form-group"><label>Nome</label><input type="text" id="accName" placeholder="Seu nome" oninput="liveUpdateName(this.value)"></div>
+            <div class="form-group"><label>Idade</label><input type="number" id="accAge" placeholder="17"></div>
+          </div>
+          <div class="form-group"><label>E-mail</label><input type="email" id="accEmail" placeholder="email@exemplo.com"></div>
+          <div class="form-row">
+            <div class="form-group"><label>Cidade</label><input type="text" id="accCity" placeholder="São Paulo"></div>
+            <div class="form-group"><label>Estado</label><input type="text" id="accState" placeholder="SP" maxlength="2"></div>
+          </div>
+          <div class="form-group"><label>Instituição</label><input type="text" id="accSchool" placeholder="Nome da escola/universidade"></div>
+          <div class="form-group"><label>Bio (aparece no perfil)</label><input type="text" id="accBio" placeholder="Conte um pouco sobre você..." oninput="liveUpdateBio(this.value)"></div>
+          <div class="form-group"><label>Nova senha (deixe em branco para não alterar)</label><input type="password" id="accPass" placeholder="Nova senha"></div>
+          <button class="btn-primary" style="max-width:220px" onclick="saveAccount()">Salvar alterações</button>
+          <div class="danger-zone">
+            <h4>⚠️ Zona de Perigo</h4>
+            <p>Ao sair, você precisará fazer login novamente.</p>
+            <button class="btn-danger" onclick="doLogout()">Sair da conta</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- EDIT PROFILE MODAL -->
+<div class="modal-overlay" id="editModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Editar Perfil</h3>
+      <button class="modal-close" onclick="closeEditModal()">✕</button>
+    </div>
+    <div class="modal-avatar-section">
+      <div class="modal-avatar-big" id="modalAvatar">M</div>
+      <div>
+        <div style="font-size:14px;font-weight:600;margin-bottom:4px">Avatar</div>
+        <div class="modal-avatar-info">Escolha uma cor para seu avatar:</div>
+        <div class="avatar-color-row">
+          <div class="avatar-color active" style="background:linear-gradient(135deg,#7C4DFF,#FF4D6D)" data-grad="linear-gradient(135deg,#7C4DFF,#FF4D6D)" onclick="selectAvatarColor(this)"></div>
+          <div class="avatar-color" style="background:linear-gradient(135deg,#00D4AA,#4A9EFF)" data-grad="linear-gradient(135deg,#00D4AA,#4A9EFF)" onclick="selectAvatarColor(this)"></div>
+          <div class="avatar-color" style="background:linear-gradient(135deg,#FF4D6D,#FF8C32)" data-grad="linear-gradient(135deg,#FF4D6D,#FF8C32)" onclick="selectAvatarColor(this)"></div>
+          <div class="avatar-color" style="background:linear-gradient(135deg,#FFD166,#FF8C32)" data-grad="linear-gradient(135deg,#FFD166,#FF8C32)" onclick="selectAvatarColor(this)"></div>
+          <div class="avatar-color" style="background:linear-gradient(135deg,#4A9EFF,#7C4DFF)" data-grad="linear-gradient(135deg,#4A9EFF,#7C4DFF)" onclick="selectAvatarColor(this)"></div>
+          <div class="avatar-color" style="background:linear-gradient(135deg,#00D4AA,#7C4DFF)" data-grad="linear-gradient(135deg,#00D4AA,#7C4DFF)" onclick="selectAvatarColor(this)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="modal-section-label">Informações Públicas</div>
+    <div class="form-group"><label>Nome</label><input type="text" id="modalName" placeholder="Seu nome" oninput="liveUpdateName(this.value)"></div>
+    <div class="form-group"><label>Bio</label><input type="text" id="modalBio" placeholder="Conte sobre você..." oninput="liveUpdateBio(this.value)" maxlength="120"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Cidade</label><input type="text" id="modalCity" placeholder="São Paulo"></div>
+      <div class="form-group"><label>Estado</label><input type="text" id="modalState" placeholder="SP" maxlength="2"></div>
+    </div>
+    <div class="modal-section-label">Interesses</div>
+    <div class="interests-edit" id="interestsEdit">
+      <div class="interest-edit-chip on" onclick="this.classList.toggle('on')">Matemática</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Física</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Química</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Biologia</div>
+      <div class="interest-edit-chip on" onclick="this.classList.toggle('on')">História</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Português</div>
+      <div class="interest-edit-chip on" onclick="this.classList.toggle('on')">ENEM</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Vestibulares</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Concursos</div>
+      <div class="interest-edit-chip" onclick="this.classList.toggle('on')">Militares</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeEditModal()">Cancelar</button>
+      <button class="btn-primary" style="margin-top:0" onclick="saveProfile()">Salvar Perfil</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"><span class="toast-icon" id="toastIcon">✅</span><span id="toastMsg">Ação realizada</span></div>
+
+<script src="script.js"></script>
+</body>
+</html>
