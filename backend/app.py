@@ -21,6 +21,7 @@ def home():
     return "AranDu conectado ao PostgreSQL!"
 
 
+# CREATE
 @app.route("/usuarios", methods=["POST"])
 def criar_usuario():
 
@@ -36,6 +37,59 @@ def criar_usuario():
 
     return jsonify({
         "mensagem": "Usuário cadastrado com sucesso!"
+    })
+
+
+# READ ALL
+@app.route("/usuarios", methods=["GET"])
+def listar_usuarios():
+
+    usuarios = Usuario.query.all()
+
+    return jsonify([
+        {
+            "id": usuario.id,
+            "nome": usuario.nome,
+            "email": usuario.email
+        }
+        for usuario in usuarios
+    ])
+
+
+# READ ONE
+@app.route("/usuarios/<int:id>", methods=["GET"])
+def buscar_usuario(id):
+
+    usuario = Usuario.query.get(id)
+
+    if usuario is None:
+        return jsonify({
+            "erro": "Usuário não encontrado"
+        }), 404
+
+    return jsonify({
+        "id": usuario.id,
+        "nome": usuario.nome,
+        "email": usuario.email
+    })
+
+
+# DELETE
+@app.route("/usuarios/<int:id>", methods=["DELETE"])
+def deletar_usuario(id):
+
+    usuario = Usuario.query.get(id)
+
+    if usuario is None:
+        return jsonify({
+            "erro": "Usuário não encontrado"
+        }), 404
+
+    db.session.delete(usuario)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Usuário removido com sucesso!"
     })
 
 
