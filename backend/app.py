@@ -74,6 +74,29 @@ def buscar_usuario(id):
     })
 
 
+# UPDATE
+@app.route("/usuarios/<int:id>", methods=["PUT"])
+def atualizar_usuario(id):
+
+    usuario = Usuario.query.get(id)
+
+    if usuario is None:
+        return jsonify({
+            "erro": "Usuário não encontrado"
+        }), 404
+
+    dados = request.get_json()
+
+    usuario.nome = dados["nome"]
+    usuario.email = dados["email"]
+
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Usuário atualizado com sucesso!"
+    })
+
+
 # DELETE
 @app.route("/usuarios/<int:id>", methods=["DELETE"])
 def deletar_usuario(id):
