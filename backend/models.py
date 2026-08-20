@@ -1,5 +1,6 @@
 from database import db
 
+
 class Usuario(db.Model):
     __tablename__ = "usuarios"
 
@@ -7,9 +8,10 @@ class Usuario(db.Model):
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(150), unique=True, nullable=False)
 
-    def to_dict(self):
-        return {
-            "id": self.id,
-            "nome": self.nome,
-            "email": self.email
-        }
+
+class Comunidade(db.Model):
+    __tablename__ = "comunidades"
+
+    id = db.Column(db.Integer, primary_key=True)
+    nome = db.Column(db.String(100), nullable=False)
+    descricao = db.Column(db.Text)

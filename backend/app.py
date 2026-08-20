@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from database import db
-from models import Usuario
+from models import Usuario, Comunidade
 
 app = Flask(__name__)
 
@@ -114,6 +114,40 @@ def deletar_usuario(id):
     return jsonify({
         "mensagem": "Usuário removido com sucesso!"
     })
+
+# CREATE COMUNIDADE
+@app.route("/comunidades", methods=["POST"])
+def criar_comunidade():
+
+    dados = request.get_json()
+
+    nova_comunidade = Comunidade(
+        nome=dados["nome"],
+        descricao=dados["descricao"]
+    )
+
+    db.session.add(nova_comunidade)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Comunidade criada com sucesso!"
+    })
+
+
+# LISTAR COMUNIDADES
+@app.route("/comunidades", methods=["GET"])
+def listar_comunidades():
+
+    comunidades = Comunidade.query.all()
+
+    return jsonify([
+        {
+            "id": comunidade.id,
+            "nome": comunidade.nome,
+            "descricao": comunidade.descricao
+        }
+        for comunidade in comunidades
+    ])
 
 
 if __name__ == "__main__":
