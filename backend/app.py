@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from database import db
-from models import Usuario, Comunidade
+from models import Usuario, Comunidade, Post
 
 app = Flask(__name__)
 
@@ -148,6 +148,42 @@ def listar_comunidades():
         }
         for comunidade in comunidades
     ])
+
+# LISTAR POSTS
+@app.route("/posts", methods=["GET"])
+def listar_posts():
+
+    posts = Post.query.all()
+
+    return jsonify([
+        {
+            "id": post.id,
+            "conteudo": post.conteudo,
+            "usuario_id": post.usuario_id,
+            "comunidade_id": post.comunidade_id
+        }
+        for post in posts
+    ])
+
+
+# CREATE POST
+@app.route("/posts", methods=["POST"])
+def criar_post():
+
+    dados = request.get_json()
+
+    novo_post = Post(
+        conteudo=dados["conteudo"],
+        usuario_id=dados["usuario_id"],
+        comunidade_id=dados["comunidade_id"]
+    )
+
+    db.session.add(novo_post)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Post criado com sucesso!"
+    })
 
 
 if __name__ == "__main__":
