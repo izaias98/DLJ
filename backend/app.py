@@ -1,6 +1,6 @@
 from flask import Flask, request, jsonify
 from database import db
-from models import Usuario, Comunidade, Post
+from models import Usuario, Comunidade, Post, ComunidadeMembro
 
 app = Flask(__name__)
 
@@ -29,7 +29,14 @@ def criar_usuario():
 
     novo_usuario = Usuario(
         nome=dados["nome"],
-        email=dados["email"]
+        email=dados["email"],
+        senha=dados["senha"],
+        tipo=dados["tipo"],
+        idade=dados["idade"],
+        cidade=dados["cidade"],
+        estado=dados["estado"],
+        instituicao=dados["instituicao"],
+        bio=dados["bio"]
     )
 
     db.session.add(novo_usuario)
@@ -122,9 +129,10 @@ def criar_comunidade():
     dados = request.get_json()
 
     nova_comunidade = Comunidade(
-        nome=dados["nome"],
-        descricao=dados["descricao"]
-    )
+    nome=dados["nome"],
+    descricao=dados["descricao"],
+    criador_id=dados["criador_id"]
+)
 
     db.session.add(nova_comunidade)
     db.session.commit()
@@ -185,6 +193,39 @@ def criar_post():
         "mensagem": "Post criado com sucesso!"
     })
 
+# ENTRAR EM UMA COMUNIDADE
+@app.route("/comunidades/entrar", methods=["POST"])
+def entrar_comunidade():
+
+    dados = request.get_json()
+
+    membro = ComunidadeMembro(
+        usuario_id=dados["usuario_id"],
+        comunidade_id=dados["comunidade_id"]
+    )
+
+    db.session.add(membro)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Usuario entrou na comunidade!"
+    })
+
+    # LISTAR MEMBROS DE UMA COMUNIDADE
+@app.route("/comunidades/<int:id>/membros", methods=["GET"])
+def listar_membros(id):
+
+    membros = ComunidadeMembro.query.filter_by(
+        comunidade_id=id
+    ).all()
+
+    return jsonify([
+        {
+            "usuario_id": membro.usuario_id,
+            "comunidade_id": membro.comunidade_id
+        }
+        for membro in membros
+    ])
 
 if __name__ == "__main__":
     app.run(debug=True)
