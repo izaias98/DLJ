@@ -219,13 +219,53 @@ def listar_membros(id):
         comunidade_id=id
     ).all()
 
-    return jsonify([
-        {
-            "usuario_id": membro.usuario_id,
-            "comunidade_id": membro.comunidade_id
-        }
-        for membro in membros
-    ])
+    resultado = []
+
+    for membro in membros:
+
+        usuario = Usuario.query.get(
+            membro.usuario_id
+        )
+
+        resultado.append({
+            "id": usuario.id,
+            "nome": usuario.nome,
+            "tipo": usuario.tipo,
+            "instituicao": usuario.instituicao,
+            "cidade": usuario.cidade,
+            "estado": usuario.estado
+        })
+
+    return jsonify(resultado)
+
+    # FEED DA COMUNIDADE
+@app.route("/comunidades/<int:id>/posts", methods=["GET"])
+def listar_posts_da_comunidade(id):
+
+    posts = Post.query.filter_by(
+        comunidade_id=id
+    ).all()
+
+    resultado = []
+
+    for post in posts:
+
+        usuario = Usuario.query.get(
+            post.usuario_id
+        )
+
+        # Proteção contra usuário inexistente
+        if usuario is None:
+            continue
+
+        resultado.append({
+            "id": post.id,
+            "autor": usuario.nome,
+            "tipo": usuario.tipo,
+            "conteudo": post.conteudo
+        })
+
+    return jsonify(resultado)
 
 if __name__ == "__main__":
     app.run(debug=True)
