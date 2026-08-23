@@ -273,5 +273,52 @@ def listar_posts_da_comunidade(id):
 
     return jsonify(resultado)
 
+# CREATE COMENTARIO
+@app.route("/comentarios", methods=["POST"])
+def criar_comentario():
+
+    dados = request.get_json()
+
+    novo_comentario = Comentario(
+        conteudo=dados["conteudo"],
+        usuario_id=dados["usuario_id"],
+        post_id=dados["post_id"]
+    )
+
+    db.session.add(novo_comentario)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Comentario criado com sucesso!"
+    })
+
+# LISTAR COMENTARIOS DE UM POST
+@app.route("/posts/<int:id>/comentarios", methods=["GET"])
+def listar_comentarios(id):
+
+    comentarios = Comentario.query.filter_by(
+        post_id=id
+    ).all()
+
+    resultado = []
+
+    for comentario in comentarios:
+
+        usuario = Usuario.query.get(
+            comentario.usuario_id
+        )
+
+        if usuario is None:
+            continue
+
+        resultado.append({
+            "id": comentario.id,
+            "autor": usuario.nome,
+            "tipo": usuario.tipo,
+            "conteudo": comentario.conteudo
+        })
+
+    return jsonify(resultado)
+
 if __name__ == "__main__":
     app.run(debug=True)
