@@ -327,6 +327,16 @@ def curtir_post():
 
     dados = request.get_json()
 
+    curtida_existente = Curtida.query.filter_by(
+        usuario_id=dados["usuario_id"],
+        post_id=dados["post_id"]
+    ).first()
+
+    if curtida_existente:
+        return jsonify({
+            "erro": "Usuario ja curtiu este post"
+        }), 400
+
     nova_curtida = Curtida(
         usuario_id=dados["usuario_id"],
         post_id=dados["post_id"]
@@ -337,6 +347,29 @@ def curtir_post():
 
     return jsonify({
         "mensagem": "Post curtido com sucesso!"
+    })
+
+# DESCURTIR POST
+@app.route("/curtidas", methods=["DELETE"])
+def descurtir_post():
+
+    dados = request.get_json()
+
+    curtida = Curtida.query.filter_by(
+        usuario_id=dados["usuario_id"],
+        post_id=dados["post_id"]
+    ).first()
+
+    if curtida is None:
+        return jsonify({
+            "erro": "Curtida nao encontrada"
+        }), 404
+
+    db.session.delete(curtida)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Curtida removida com sucesso!"
     })
 
 # CONTAR CURTIDAS DE UM POST
