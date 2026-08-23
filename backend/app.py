@@ -1,6 +1,12 @@
 from flask import Flask, request, jsonify
 from database import db
-from models import Usuario, Comunidade, Post, ComunidadeMembro
+from models import (
+    Usuario,
+    Comunidade,
+    Post,
+    ComunidadeMembro,
+    Comentario
+)
 
 app = Flask(__name__)
 

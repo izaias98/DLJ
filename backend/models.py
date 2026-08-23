@@ -90,3 +90,29 @@ class Post(db.Model):
         db.ForeignKey("comunidades.id"),
         nullable=False
     )
+
+class Comentario(db.Model):
+    __tablename__ = "comentarios"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    conteudo = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    usuario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id"),
+        nullable=False
+    )
+
+    post_id = db.Column(
+        db.Integer,
+        db.ForeignKey("posts.id"),
+        nullable=False
+    )
+    
