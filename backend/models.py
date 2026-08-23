@@ -115,4 +115,24 @@ class Comentario(db.Model):
         db.ForeignKey("posts.id"),
         nullable=False
     )
+
+class Curtida(db.Model):
+    __tablename__ = "curtidas"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    usuario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id"),
+        nullable=False
+    )
+
+    post_id = db.Column(
+        db.Integer,
+        db.ForeignKey("posts.id"),
+        nullable=False
+    )
     

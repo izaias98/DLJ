@@ -5,7 +5,8 @@ from models import (
     Comunidade,
     Post,
     ComunidadeMembro,
-    Comentario
+    Comentario,
+    Curtida
 )
 
 app = Flask(__name__)
@@ -319,6 +320,37 @@ def listar_comentarios(id):
         })
 
     return jsonify(resultado)
+
+# CURTIR POST
+@app.route("/curtidas", methods=["POST"])
+def curtir_post():
+
+    dados = request.get_json()
+
+    nova_curtida = Curtida(
+        usuario_id=dados["usuario_id"],
+        post_id=dados["post_id"]
+    )
+
+    db.session.add(nova_curtida)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Post curtido com sucesso!"
+    })
+
+# CONTAR CURTIDAS DE UM POST
+@app.route("/posts/<int:id>/curtidas", methods=["GET"])
+def contar_curtidas(id):
+
+    total = Curtida.query.filter_by(
+        post_id=id
+    ).count()
+
+    return jsonify({
+        "post_id": id,
+        "curtidas": total
+    })
 
 if __name__ == "__main__":
     app.run(debug=True)
