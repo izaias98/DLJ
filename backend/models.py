@@ -7,22 +7,10 @@ class Usuario(db.Model):
     id = db.Column(db.Integer, primary_key=True)
 
     nome = db.Column(db.String(100), nullable=False)
+    email = db.Column(db.String(150), unique=True, nullable=False)
 
-    email = db.Column(
-        db.String(150),
-        unique=True,
-        nullable=False
-    )
-
-    senha = db.Column(
-        db.String(255),
-        nullable=False
-    )
-
-    tipo = db.Column(
-        db.String(20),
-        nullable=False
-    )
+    senha = db.Column(db.String(255), nullable=False)
+    tipo = db.Column(db.String(20), nullable=False)
 
     idade = db.Column(db.Integer)
 
@@ -30,9 +18,7 @@ class Usuario(db.Model):
 
     estado = db.Column(db.String(2))
 
-    instituicao = db.Column(
-        db.String(150)
-    )
+    instituicao = db.Column(db.String(150))
 
     bio = db.Column(db.Text)
 
@@ -42,10 +28,7 @@ class Comunidade(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    nome = db.Column(
-        db.String(100),
-        nullable=False
-    )
+    nome = db.Column(db.String(100), nullable=False)
 
     descricao = db.Column(db.Text)
 
@@ -54,6 +37,7 @@ class Comunidade(db.Model):
         db.ForeignKey("usuarios.id"),
         nullable=False
     )
+
 
 class ComunidadeMembro(db.Model):
     __tablename__ = "comunidade_membros"
@@ -71,6 +55,7 @@ class ComunidadeMembro(db.Model):
         db.ForeignKey("comunidades.id"),
         nullable=False
     )
+
 
 class Post(db.Model):
     __tablename__ = "posts"
@@ -91,13 +76,11 @@ class Post(db.Model):
         nullable=False
     )
 
+
 class Comentario(db.Model):
     __tablename__ = "comentarios"
 
-    id = db.Column(
-        db.Integer,
-        primary_key=True
-    )
+    id = db.Column(db.Integer, primary_key=True)
 
     conteudo = db.Column(
         db.Text,
@@ -115,6 +98,7 @@ class Comentario(db.Model):
         db.ForeignKey("posts.id"),
         nullable=False
     )
+
 
 class Curtida(db.Model):
     __tablename__ = "curtidas"
@@ -135,4 +119,28 @@ class Curtida(db.Model):
         db.ForeignKey("posts.id"),
         nullable=False
     )
-    
+
+
+class Notificacao(db.Model):
+    __tablename__ = "notificacoes"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    mensagem = db.Column(
+        db.String(255),
+        nullable=False
+    )
+
+    lida = db.Column(
+        db.Boolean,
+        default=False
+    )
+
+    usuario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id"),
+        nullable=False
+    )

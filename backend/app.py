@@ -6,7 +6,8 @@ from models import (
     Post,
     ComunidadeMembro,
     Comentario,
-    Curtida
+    Curtida,
+    Notificacao
 )
 
 app = Flask(__name__)
@@ -384,6 +385,41 @@ def contar_curtidas(id):
         "post_id": id,
         "curtidas": total
     })
+
+# CRIAR NOTIFICACAO
+@app.route("/notificacoes", methods=["POST"])
+def criar_notificacao():
+
+    dados = request.get_json()
+
+    notificacao = Notificacao(
+        mensagem=dados["mensagem"],
+        usuario_id=dados["usuario_id"]
+    )
+
+    db.session.add(notificacao)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Notificacao criada com sucesso!"
+    })
+
+# LISTAR NOTIFICACOES DE UM USUARIO
+@app.route("/usuarios/<int:id>/notificacoes", methods=["GET"])
+def listar_notificacoes(id):
+
+    notificacoes = Notificacao.query.filter_by(
+        usuario_id=id
+    ).all()
+
+    return jsonify([
+        {
+            "id": notificacao.id,
+            "mensagem": notificacao.mensagem,
+            "lida": notificacao.lida
+        }
+        for notificacao in notificacoes
+    ])
 
 if __name__ == "__main__":
     app.run(debug=True)
