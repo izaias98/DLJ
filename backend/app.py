@@ -7,7 +7,8 @@ from models import (
     ComunidadeMembro,
     Comentario,
     Curtida,
-    Notificacao
+    Notificacao,
+    Mensagem
 )
 
 app = Flask(__name__)
@@ -420,6 +421,71 @@ def listar_notificacoes(id):
         }
         for notificacao in notificacoes
     ])
+
+# MARCAR NOTIFICACAO COMO LIDA
+@app.route("/notificacoes/<int:id>/ler", methods=["PUT"])
+def marcar_notificacao_como_lida(id):
+
+    notificacao = Notificacao.query.get(id)
+
+    if notificacao is None:
+        return jsonify({
+            "erro": "Notificacao nao encontrada"
+        }), 404
+
+    notificacao.lida = True
+
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Notificacao marcada como lida!"
+    })
+
+# ENVIAR MENSAGEM
+@app.route("/mensagens", methods=["POST"])
+def enviar_mensagem():
+
+    dados = request.get_json()
+
+    mensagem = Mensagem(
+        conteudo=dados["conteudo"],
+        remetente_id=dados["remetente_id"],
+        destinatario_id=dados["destinatario_id"]
+    )
+
+    db.session.add(mensagem)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Mensagem enviada com sucesso!"
+    })
+
+# LISTAR MENSAGENS
+@app.route("/mensagens", methods=["GET"])
+def listar_mensagens():
+
+    mensagens = Mensagem.query.all()
+
+    resultado = []
+
+    for mensagem in mensagens:
+
+        remetente = Usuario.query.get(
+            mensagem.remetente_id
+        )
+
+        destinatario = Usuario.query.get(
+            mensagem.destinatario_id
+        )
+
+        resultado.append({
+            "id": mensagem.id,
+            "remetente": remetente.nome,
+            "destinatario": destinatario.nome,
+            "conteudo": mensagem.conteudo
+        })
+
+    return jsonify(resultado)
 
 if __name__ == "__main__":
     app.run(debug=True)

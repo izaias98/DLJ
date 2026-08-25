@@ -62,7 +62,10 @@ class Post(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
 
-    conteudo = db.Column(db.Text, nullable=False)
+    conteudo = db.Column(
+        db.Text,
+        nullable=False
+    )
 
     usuario_id = db.Column(
         db.Integer,
@@ -80,7 +83,10 @@ class Post(db.Model):
 class Comentario(db.Model):
     __tablename__ = "comentarios"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
 
     conteudo = db.Column(
         db.Text,
@@ -140,6 +146,32 @@ class Notificacao(db.Model):
     )
 
     usuario_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id"),
+        nullable=False
+    )
+
+
+class Mensagem(db.Model):
+    __tablename__ = "mensagens"
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    conteudo = db.Column(
+        db.Text,
+        nullable=False
+    )
+
+    remetente_id = db.Column(
+        db.Integer,
+        db.ForeignKey("usuarios.id"),
+        nullable=False
+    )
+
+    destinatario_id = db.Column(
         db.Integer,
         db.ForeignKey("usuarios.id"),
         nullable=False
