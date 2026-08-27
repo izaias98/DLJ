@@ -3,12 +3,13 @@ from database import db
 from models import (
     Usuario,
     Comunidade,
-    Post,
     ComunidadeMembro,
+    Post,
     Comentario,
     Curtida,
     Notificacao,
-    Mensagem
+    Mensagem,
+    Evento
 )
 
 app = Flask(__name__)
@@ -486,6 +487,63 @@ def listar_mensagens():
         })
 
     return jsonify(resultado)
+
+# CRIAR EVENTO
+@app.route("/eventos", methods=["POST"])
+def criar_evento():
+
+    dados = request.get_json()
+
+    evento = Evento(
+        titulo=dados["titulo"],
+        descricao=dados["descricao"],
+        data=dados["data"],
+        comunidade_id=dados["comunidade_id"],
+        criador_id=dados["criador_id"]
+    )
+
+    db.session.add(evento)
+    db.session.commit()
+
+    return jsonify({
+        "mensagem": "Evento criado com sucesso!"
+    })
+
+# LISTAR EVENTOS
+@app.route("/eventos", methods=["GET"])
+def listar_eventos():
+
+    eventos = Evento.query.all()
+
+    return jsonify([
+        {
+            "id": evento.id,
+            "titulo": evento.titulo,
+            "descricao": evento.descricao,
+            "data": evento.data,
+            "comunidade_id": evento.comunidade_id,
+            "criador_id": evento.criador_id
+        }
+        for evento in eventos
+    ])
+
+# EVENTOS DE UMA COMUNIDADE
+@app.route("/comunidades/<int:id>/eventos", methods=["GET"])
+def eventos_comunidade(id):
+
+    eventos = Evento.query.filter_by(
+        comunidade_id=id
+    ).all()
+
+    return jsonify([
+        {
+            "id": evento.id,
+            "titulo": evento.titulo,
+            "descricao": evythonento.descricao,
+            "data": evento.data
+        }
+        for evento in eventos
+    ])
 
 if __name__ == "__main__":
     app.run(debug=True)
